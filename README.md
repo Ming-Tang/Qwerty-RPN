@@ -5,10 +5,6 @@
 
 A Reverse Polish notation calculator that has most opcodes of stack-based assembly languages. It is generally Turing-complete (needs to be tested).
 
-
-
-* * *
-
 # DESCRIPTION
 
 The `eval_rpn` function evaluates an expression. The first argument is a string containing the expression. The function returns the stack after the evaluation. When an error occurred, `die` will be called. However, you can trap errors by using `eval`, `do` or other try-catch modules.
@@ -33,7 +29,7 @@ To write a variable-variable, write `=$`. The top of the stack will be popped an
 
 The following expression outputs 10:
 
-    10 ; stack:10
+     10 ; stack:10
      5  ; stack:10 5
      =$ ;            variables:$5=10
      5  ; stack:5    variables:$5=10
@@ -41,13 +37,11 @@ The following expression outputs 10:
 
 Arrays can be made by using variable-variables. Variable-variables are made to make this language closer to Turing-complete.
 
-
-
 ## ASSEMBLER to RPN
 
 A typical stack-based assembly code looks like this:
 
-    push 180  ; stack is 180
+     push 180  ; stack is 180
      push 250  ; stack is 180 250
      add       ; stack is 430
      push 50   ; stack is 430 50
@@ -55,17 +49,15 @@ A typical stack-based assembly code looks like this:
 
 It will be translated to RPN like this:
 
-    180 250 + 50 = <LABEL
+     180 250 + 50 = <LABEL
 
 The PUSH opcode will be converted to numbers, and ADD will be converted to `+` as expected. However, there is no JEQ, JLT, JGT and other compare-and-goto opcodes in RPN, so you must compare manually and goto. `50 = ` means to compare the top of the stack with 50, and pushes 0 or 1 based on the result of the comparsion.
-
-
 
 ## QUICK REFERENCE
 
 Here is a list of all operators by order of QWERTY keyboard. I don't have time to document all of them, so I used assembler opcode names.
 
-    +--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+     +--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
      | ~ not  | ! pop  | @ getn | # putn | $ swap | % mod  | ^ pow  | & and  | * mul  | ( dec  | ) inc  | _ neg  | + add  |
      | ` xor  | 1 ---- | 2 ---- | 3 ---- | 4 ---- | 5 ---- | 6 ---- | 7 ---- | 8 ---- | 9 ---- | 0 ---- | - sub  | = eq   |
      +--------+--------+--------+--------+--------+--------+--------+--------+-----------------+--------+--------+--------+
@@ -95,23 +87,19 @@ Here is the list of other operations.
 
 7.  `=$`Sets a variable-variable.
 
-
-
-* * *
-
 # EXAMPLES
 
 Ask user to input 2 numbers, and print their sum.
 
-    @@+#
+     @@+#
 
 Digital root calculator
 
-    1@1-+9%
+     1@1-+9%
 
 Locals-based factorial
 
-    ;  CODE                ; PSEUDOCODE              
+     ;  CODE                ; PSEUDOCODE              
      @ =value               ; value = input_number();
      1 =result              ; result = 1;
      $value =i              ; i = value;
@@ -123,15 +111,11 @@ Locals-based factorial
 
 without comments:
 
-    @ =value 1 =result $value =i >loop $result $i * =result $i ( =i $i <loop $result
+     @ =value 1 =result $value =i >loop $result $i * =result $i ( =i $i <loop $result
 
 Countdown from 15
 
-    16>loop(::#32.<loop!
-
-
-
-* * *
+     16>loop(::#32.<loop!
 
 # TODO
 
