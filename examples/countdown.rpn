@@ -1,9 +1,11 @@
+; Countdown
+; Asks for a number, then counts down
 @
 >loop
  (
  ::
  #
- 1
+ 32
  .
 <loop
 !
