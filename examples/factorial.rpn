@@ -1,0 +1,10 @@
+; Factorial program
+@ =value               ; value = input_number();
+1 =result              ; result = 1;
+$value =i              ; i = value;
+>loop                  ; loop:
+ $result $i * =result  ;  result *= i;
+ $i ( =i $i            ;  i --;
+<loop                  ; if (i) { goto loop; }
+$result                ; return result;
+

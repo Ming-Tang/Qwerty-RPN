@@ -1,6 +1,6 @@
 # SYNOPSIS
 
-    use Math::QwertyRPN qw(eval_rpn);
+     use Math::QwertyRPN qw(eval_rpn);
      print eval_rpn "12 54 + 12 *"; # 792
 
 A Reverse Polish notation calculator that has most opcodes of stack-based assembly languages. It is generally Turing-complete (needs to be tested).
