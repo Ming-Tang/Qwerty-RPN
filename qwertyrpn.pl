@@ -163,7 +163,7 @@ sub eval_rpn($) {
     /^\'$/        and op { bool((shift) <= (shift)) };
 
     # fourth row: zxcvbnm
-    /^X$/         and die '???';
+    /^X$/         and die join ', ' @stack;
     /^C$/         and un { acos shift };
     /^M$/         and op { my ($l, $r) = @_;
                            return ($l > $r) ? $l : $r; };
@@ -174,7 +174,6 @@ sub eval_rpn($) {
     /^x$/         and return @stack;
     /^c$/         and un { cos shift };
     /^b$/         and un { bool shift };
-    /^n$/         and un { -shift };
     /^m$/         and op { my ($l, $r) = @_;
                            return ($l < $r) ? $l : $r; };
     /^\,$/        and push @stack, ord getc STDIN;
