@@ -125,10 +125,11 @@ sub eval_rpn($) {
     /^\*$/        and op { (shift) * (shift) };
     /^\($/        and un { (shift) - 1 };
     /^\)$/        and un { (shift) + 1 };
-    /^_$/         and un { (shift) == (shift) };
+    /^_$/         and un { -shift };
     /^\+$/        and op { (shift) + (shift) };
     /^\`$/        and op { (shift) ^ (shift) };
     /^\-$/        and op { (shift) - (shift) };
+    /^\=$/        and op { (shift) == (shift) };
 
     # second row: qwerty
     /^E$/         and un { 10 ** shift };
@@ -173,7 +174,6 @@ sub eval_rpn($) {
     /^x$/         and return @stack;
     /^c$/         and un { cos shift };
     /^b$/         and un { bool shift };
-    /^n$/         and un { -shift };
     /^m$/         and op { my ($l, $r) = @_;
                            return ($l < $r) ? $l : $r; };
     /^\,$/        and push @stack, ord getc STDIN;
