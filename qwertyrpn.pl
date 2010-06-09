@@ -163,7 +163,7 @@ sub eval_rpn($) {
     /^\'$/        and op { bool((shift) <= (shift)) };
 
     # fourth row: zxcvbnm
-    /^X$/         and die join ', ' @stack;
+    /^X$/         and die join ', ', @stack;
     /^C$/         and un { acos shift };
     /^M$/         and op { my ($l, $r) = @_;
                            return ($l > $r) ? $l : $r; };
