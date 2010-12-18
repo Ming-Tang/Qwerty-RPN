@@ -9,6 +9,7 @@ use strict;
 
 our $rxnum = qr/(\d+(?:\.\d+)?)/;
 our $rxgoto = qr/\<([A-Za-z0-9_]+)/;
+our $rxvgoto = qr/\<\$/;
 our $rxget = qr/\$([A-Za-z0-9_]+)/;
 our $rxgv = qr/\$\$/;
 our $rxset = qr/\=([A-Za-z0-9_]+)/;
@@ -25,6 +26,7 @@ sub eval_rpn($) {
              |\d+(?:\.\d+)?   # numbers
              |\>[A-Za-z0-9_]+ # labels
              |\<[A-Za-z0-9_]+ # goto statements
+             |\<\$            # variable gotos
              |\$[A-Za-z0-9_]+ # get variables
              |\$\$            # variable-variables
              |\=[A-Za-z0-9_]+ # set variables
@@ -46,22 +48,30 @@ sub eval_rpn($) {
   our %variables = { };
   our $pc = 0;
 
+  sub pops() {
+    $#stack < 0 and die 'Not enough operands.';
+    pop @stack;
+  }
+
   sub op(&) {
     $#stack < 1 and die 'Not enough operands.';
     my $sub = shift;
     my ($r, $l) = (pop @stack, pop @stack);
     push @stack, &$sub($l, $r);
   }
+
   sub un(&) {
-    $#stack < 0 and die 'Stack is empty.';
+    $#stack < 0 and die 'Not enough operands.';
     my $sub = shift;
     $stack[$#stack] = &$sub($stack[$#stack]);
   }
+
   sub factorial($) {
     my $n = 1;
     $n *= $_ for 2..shift;
     return $n;
   }
+
   sub avg() {
     my $sum = 0;
     my $len = $#stack;
@@ -69,19 +79,24 @@ sub eval_rpn($) {
     @stack = ();
     return $sum / $len;
   }
+
   sub deg($) {
     ((shift) / PI) * 180;
   }
+
   sub rad($) {
     ((shift) / 180) * PI;
   }
+
   sub round($) {
     my $n = shift;
     return int $n + 0.5 * ($n <=> 0);
   }
+
   sub log10($) {
     log(shift) / log(10);
   }
+
   sub bool($) {
     shift and return 1;
     return 0;
@@ -94,8 +109,9 @@ sub eval_rpn($) {
     /^$rxnum$/
                   and push @stack, $1 + 0;
     # goto statements
-    /^$rxgoto$/   and do { return if $#stack < 0;
-                           pop @stack and $pc = $labels{$1}; };
+    /^$rxgoto$/   and pops and $pc = $labels{$1};
+    # variable gotos
+    /^$rxvgoto$/  and pops and $pc = $labels{pops};
     # get variable
     /^$rxget$/    and push @stack, 0 + $variables{$1};
     # get variable-variables
@@ -159,6 +175,7 @@ sub eval_rpn($) {
     /^s$/         and un { sin shift };
     /^d$/         and un { deg shift };
     /^f$/         and un { factorial shift };
+    /^k$/         and do { $pc = pops; };
     /^l$/         and un { log shift };
     /^\'$/        and op { bool((shift) <= (shift)) };
 
@@ -177,7 +194,7 @@ sub eval_rpn($) {
     /^m$/         and op { my ($l, $r) = @_;
                            return ($l < $r) ? $l : $r; };
     /^\,$/        and push @stack, ord getc STDIN;
-    /^\.$/        and print chr (0 + pop @stack);
+    /^\.$/        and print chr (0 + pops);
     /^\/$/        and op { (shift) / (shift) };
   }
 
